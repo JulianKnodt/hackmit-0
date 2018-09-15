@@ -1,12 +1,9 @@
-# HackMIT 2018
+# HackMIT 0
 
-HackMIT 2018 project.
+- Anoop Sonar
+- Julian Knodt
 
-## Plans
+Hackathon Project for hack mit
 
----
-
-
-Compiler for scheme to intel x86-64
-
+Clustering russian troll tweet content using nlp and ML
 
