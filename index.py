@@ -14,6 +14,9 @@ import collections
 import csv
 import requests
 from requests.auth import HTTPBasicAuth
+import urllib.parse
+import json
+from watson_developer_cloud import NaturalLanguageClassifierV1
 
 browndist = nltk.FreqDist(w.lower() for w in nltk.corpus.brown.words(categories="news"))
 webdist = nltk.FreqDist(w.lower() for w in nltk.corpus.webtext.words())
@@ -124,7 +127,17 @@ def check():
   tweet = request.args.get("tweet")
   if len(tweet) == 0:
     return ""
-  r = requests.get("https://gateway.watsonplatform.net/natural-language-classifier/api/v1/classifiers/b8f3cex446-nlc-797/classify?text=%s" % tweet,
-    auth=HTTPBasicAuth("6df58a9e-65b2-426c-b872-efbb341e6f52", "NBDJiVjB0P7N"))
+  r = requests.get("https://gateway.watsonplatform.net/natural-language-classifier/api/v1/classifiers/b8f3cex446-nlc-797/classify",
+    auth=HTTPBasicAuth("6df58a9e-65b2-426c-b872-efbb341e6f52", "NBDJiVjB0P7N"),
+    params={"text": urllib.parse.quote(tweet)})
   return r.text
+
+@app.route("/cherk")
+def cherk():
+  tweet = request.args.get("tweet")
+  natural_language_classifier = NaturalLanguageClassifierV1(
+    username='6df58a9e-65b2-426c-b872-efbb341e6f52',
+      password='NBDJiVjB0P7N')
+  classes = natural_language_classifier.classify('b8f3cex446-nlc-797', tweet)
+  print(json.dumps(classes, indent=2))
 

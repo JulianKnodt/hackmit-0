@@ -14,14 +14,15 @@ export default class extends React.Component {
     };
   }
   async onClick() {
-    const resp = await fetch(`http://localhost:5000/check?tweet=${this.state.tweet}`)
+    const resp = await fetch(`http://localhost:5000/check?tweet=${escape(this.state.tweet)}`)
       .then(resp => resp.text());
     const data = JSON.parse(resp);
-    this.setState({watson: data.classes[0].class_name, similar: []});
+    console.log(data.classes);
+    this.setState({watson: data.classes[0].confidence, similar: []});
   }
   async related() {
-    const resp = await fetch(`http://localhost:5000/approx?tweet=${this.state.tweet}`, {
-    }).then(resp => resp.text());
+    const resp = await fetch(`http://localhost:5000/approx?tweet="${this.state.tweet}"`)
+      .then(resp => resp.text());
     this.setState({similar: resp.split('\n').slice(1).filter(it => it).map(clean), watson: null})
   }
   onChange(e) {
@@ -33,10 +34,10 @@ export default class extends React.Component {
 width:"100vw", backgroundRepeat: "no-repeat", backgroundPosition: "center"}}>
   <center style={{paddingTop:"300px"}}>
     {this.state.watson === null ? null :
-      <h1>{Number(this.state.watson)*100}% Likely Fraudelent</h1>
+      <h2>{(1-this.state.watson)*100}% Likely Fraudelent</h2>
     }
-    {this.state.similar.map(tweet => {
-      return <p>{tweet}</p>
+    {this.state.similar.map((tweet,i) => {
+      return <p key={i}>{tweet}</p>
     })}
     <font size="5">
     <p style={{paddingTop: this.state.similar.length ? "" : "300px"}}>How close is your tweet to <a href={src}>https://github.com/fivethirtyeight/russian-troll-tweets</a>?
