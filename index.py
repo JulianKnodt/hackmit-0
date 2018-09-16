@@ -44,7 +44,7 @@ cnt, total = tweet_freqs()
 
 def freq(s, dist):
   words = str.split(s)
-  return sum([dist.freq(w) for w in words])/len(words)
+  return sum([dist.freq(w.lower()) for w in words])/len(words)
 
 def csv_freq(s):
   words = str.split(s)
