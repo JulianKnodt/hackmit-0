@@ -12,18 +12,22 @@ from flask import request, Flask
 from flask_cors import CORS
 import collections
 import csv
+import requests
+from requests.auth import HTTPBasicAuth
 
 browndist = nltk.FreqDist(w.lower() for w in nltk.corpus.brown.words(categories="news"))
 webdist = nltk.FreqDist(w.lower() for w in nltk.corpus.webtext.words())
 sotu = nltk.FreqDist(w.lower() for w in nltk.corpus.state_union.words())
 pcs = nltk.FreqDist(w.lower() for w in nltk.corpus.pros_cons.words())
 
+max_iter = 13
+
 # counts words from troll tweets, returning a counter, and the total word count
 def tweet_freqs():
   cnt = collections.Counter()
   total = 0
   print("Counting tweets")
-  for i in range(1, 5):
+  for i in range(1, max_iter):
     with open("./russian-troll-tweets/IRAhandle_tweets_%d.csv" % i) as csvfile:
       reader = csv.reader(csvfile)
       for row in reader:
@@ -51,7 +55,7 @@ def load():
   content = []
   visited = set()
   print("Loading data in")
-  for i in range(1,7):
+  for i in range(1,max_iter):
     with open("./russian-troll-tweets/IRAhandle_tweets_%d.csv" % i) as csvfile:
       reader = csv.reader(csvfile)
       for row in reader:
@@ -115,4 +119,12 @@ def sample():
   return "\n".join([content[i][0] for i in indices])
 
 
+@app.route("/check")
+def check():
+  tweet = request.args.get("tweet")
+  if len(tweet) == 0:
+    return ""
+  r = requests.get("https://gateway.watsonplatform.net/natural-language-classifier/api/v1/classifiers/b8f3cex446-nlc-797/classify?text=%s" % tweet,
+    auth=HTTPBasicAuth("6df58a9e-65b2-426c-b872-efbb341e6f52", "NBDJiVjB0P7N"))
+  return r.text
 
