@@ -18,4 +18,4 @@ six==1.11.0
 urllib3==1.26.5
 watson-developer-cloud==2.0.1
 websocket-client==0.47.0
-Werkzeug==0.15.5
+Werkzeug==2.2.3
